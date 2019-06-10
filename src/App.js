@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { getAll, getById } from './api/phone'
+import {getAll, getById} from './api/phone'
 import Basket from './Basket'
 import Filter from './Filter'
 import Catalog from './Catalog'
+import Viewer from './Viewer'
 
 import './App.css';
 
@@ -26,7 +27,14 @@ class App extends React.Component {
           <div className="row">
             <div className="col-md-2">
               <Filter />
-              <Basket />
+              <Basket 
+              phoneId={this.state.basketItems}
+                deleteFromBasket={i => { 
+                this.state.basketItems.splice(i , 1)
+                this.setState({
+                  basketItems: this.state.basketItems,
+                })
+              }} />
             </div>
 
             <div className="col-md-10">
@@ -38,7 +46,13 @@ class App extends React.Component {
                       selectedPhone: null,
                     });
                   }}
-                />
+                  addToBasket={(phoneId) => {
+                    this.setState((prevState) => {
+                      return { 
+                        basketItems: this.state.basketItems.concat(phoneId),
+                      }
+                    })
+                  }}/>
               ) : (
                 <Catalog
                   phones={this.state.phones}
@@ -47,8 +61,14 @@ class App extends React.Component {
                       selectedPhone: getById(phoneId),
                     });
                   }}
-                />
-              ) }
+                  addToBasket={(phoneId) => {
+                    this.setState((prevState) => {
+                      return { 
+                        basketItems: this.state.basketItems.concat(phoneId),
+                      }
+                    })
+                  }}/>
+              )}
             </div>
           </div>
         </div>
@@ -57,23 +77,5 @@ class App extends React.Component {
   }
 }
 
-const Viewer = (props) => (
-  <div>
-    <img className="phone" src={props.phone.images[0]}/>
-    <button onClick={props.onBack}>Back</button>
-    <button>Add to basket</button>
-
-    <h1>{props.phone.name}</h1>
-    <p>{props.phone.description}</p>
-
-    <ul className="phone-thumbs">
-      { props.phone.images.map(imageUrl => (
-        <li>
-          <img src={imageUrl}/>
-        </li>
-      )) }
-    </ul>
-  </div>
-);
 
 export default App;
